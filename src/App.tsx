@@ -44,4 +44,5 @@ function App() {
   );
 }
 
+// Remove the withAuthenticator HOC
 export default App;
