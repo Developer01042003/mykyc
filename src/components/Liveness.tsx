@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Loader, Heading } from "@aws-amplify/ui-react";
 import { FaceLivenessDetector } from "@aws-amplify/ui-react-liveness";
-import { LivenessError } from "@aws-amplify/ui-react-liveness/dist/types/components/FaceLivenessDetector/service/types/liveness";
 import { authService } from "../services/api";
+
+interface LivenessError {
+  message: string;
+  code: string;
+}
 
 export function LivenessQuickStart() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,8 +38,8 @@ export function LivenessQuickStart() {
     }
   };
 
-  const handleError = (livenessError: LivenessError) => {
-    console.log("got error", livenessError);
+  const handleError = (error: LivenessError) => {
+    console.log("got error", error);
   };
 
   return (
