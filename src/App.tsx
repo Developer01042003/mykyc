@@ -8,14 +8,12 @@ import Dashboard from './components/Dashboard';
 
 // Configure Amplify
 Amplify.configure({
-  // Remove the Auth configuration since we're using our own backend
   API: {
-    endpoints: [
-      {
-        name: "liveness",
+    REST: {
+      liveness: {
         endpoint: import.meta.env.VITE_API_URL || 'http://localhost:8000'
       }
-    ]
+    }
   }
 });
 
