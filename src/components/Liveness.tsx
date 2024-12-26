@@ -3,10 +3,13 @@ import { Loader, Heading } from "@aws-amplify/ui-react";
 import { FaceLivenessDetector } from "@aws-amplify/ui-react-liveness";
 import { authService } from "../services/api";
 
-interface LivenessError {
-  message: string;
-  code: string;
-}
+type LivenessError = {
+  // Using type instead of interface
+  message?: string;
+  code?: string;
+  name?: string;
+  [key: string]: any; // Allow any additional properties
+};
 
 export function LivenessQuickStart() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -17,9 +20,14 @@ export function LivenessQuickStart() {
 
   useEffect(() => {
     const fetchCreateLiveness = async () => {
-      const response = await authService.getSessionId();
-      setSessionId({ sessionId: response.sessionId });
-      setLoading(false);
+      try {
+        const response = await authService.getSessionId();
+        setSessionId({ sessionId: response.sessionId });
+      } catch (error) {
+        console.error('Error fetching session:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchCreateLiveness();
@@ -28,18 +36,23 @@ export function LivenessQuickStart() {
   const handleAnalysisComplete = async () => {
     if (!sessionId?.sessionId) return;
 
-    const result = await authService.verifyLiveness(sessionId.sessionId);
-    if (result.verified) {
-      setSuccess("User is live");
-      console.log("live");
-    } else {
-      setSuccess("User is not live");
-      console.log("not live");
+    try {
+      const result = await authService.verifyLiveness(sessionId.sessionId);
+      if (result.verified) {
+        setSuccess("User is live");
+        console.log("live");
+      } else {
+        setSuccess("User is not live");
+        console.log("not live");
+      }
+    } catch (error) {
+      console.error('Error verifying liveness:', error);
+      setSuccess("Verification failed");
     }
   };
 
-  const handleError = (error: LivenessError) => {
-    console.log("got error", error);
+  const handleError = (livenessError: LivenessError) => {
+    console.log("got error", livenessError);
   };
 
   return (
